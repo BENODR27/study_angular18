@@ -2,7 +2,12 @@ npm install -g @angular/cli
 
 ng new <project-name>
 
-npm start
+npm start //for dev
+
+ng serve --configuration production
+ng serve --configuration test
+
+
 
 ng generate component modules/auth/user
 ng generate component modules/auth/role
