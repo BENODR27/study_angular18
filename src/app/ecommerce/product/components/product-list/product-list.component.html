@@ -1,0 +1,11 @@
+<div>
+    <h1>Product List</h1>
+    <ul>
+      <li *ngFor="let product of products">
+        <a [routerLink]="['view', product.id]">{{ product.title }}</a>
+        <a [routerLink]="['edit', product.id]">edit</a>
+      </li>
+    </ul>
+    <button [routerLink]="['create']">Add New Product</button>
+  </div>
+  
