@@ -1,0 +1,19 @@
+sudo apt install certbot python3-certbot-nginx
+
+sudo certbot --nginx -d your_domain.com -d www.your_domain.com
+
+sudo certbot renew --dry-run
+
+
+How to Use python3-certbot-nginx
+Install Certbot and the NGINX Plugin:
+sudo apt install certbot python3-certbot-nginx
+
+Obtain and Install a Certificate:
+sudo certbot --nginx -d your_domain.com -d www.your_domain.com
+This command will:
+Obtain a certificate for your_domain.com and www.your_domain.com.
+Automatically configure NGINX to use the certificate.
+Optionally redirect HTTP traffic to HTTPS.
+Renew Certificates: Certbot automatically renews certificates, but you can manually test the renewal process:
+sudo certbot renew --dry-run

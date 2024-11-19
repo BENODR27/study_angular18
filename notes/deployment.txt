@@ -1,0 +1,125 @@
+ng build --base-href "http://domain.com/"
+
+
+scp -r ./dist/test_app_angular18/* user@123.456.789:/var/www/test_app_angular18/
+
+
+
+Deploying an Angular 18 application on an Ubuntu server with Nginx involves several steps. Here's a detailed guide to help you through the process:
+
+### 1. Update Your System
+First, ensure your system is up to date:
+```bash
+sudo apt update && sudo apt upgrade
+```
+
+### 2. Install Node.js and npm
+Angular applications require Node.js and npm. Install them using the following commands:
+```bash
+curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+### 3. Install Angular CLI
+Install the Angular CLI globally:
+```bash
+sudo npm install -g @angular/cli
+```
+
+### 4. Build Your Angular Application
+Navigate to your Angular project directory and build the application for production:
+```bash
+ng build --prod
+```
+This will create a `dist/` directory with your production files.
+
+### 5. Install Nginx
+Install Nginx web server:
+```bash
+sudo apt install nginx
+```
+
+### 6. Configure Nginx
+Create a new configuration file for your Angular application:
+```bash
+sudo nano /etc/nginx/sites-available/your-app
+```
+Add the following configuration, adjusting the paths as necessary:
+```nginx
+server {
+    listen 80;
+    server_name your_domain_or_IP;
+
+    root /var/www/your-app;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+### 7. Enable the New Site and Restart Nginx
+Create a symbolic link to enable the site configuration and restart Nginx to apply the changes:
+```bash
+sudo ln -s /etc/nginx/sites-available/your-app /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+```
+
+### 8. Transfer Your Build Files
+Copy the contents of your `dist/` directory to the Nginx document root:
+```bash
+sudo cp -r dist/your-app/* /var/www/your-app/
+```
+
+### 9. Adjust Firewall Settings
+Ensure that your firewall allows HTTP traffic:
+```bash
+sudo ufw allow 'Nginx Full'
+```
+
+Your Angular 18 application should now be accessible via your server's IP address or domain name.
+
+
+
+to see errors
+sudo cat /var/log/nginx/error.log
+
+
+Ensure that your Nginx configuration files are correct and have no syntax errors. You can test the configuration with:
+
+sudo nginx -t
+
+
+Make sure that the files and directories Nginx needs to access have the correct permissions. Typically, directories should have 755 permissions and files should have 644:
+
+sudo chmod -R 755 /var/www/your-app
+sudo chmod -R 644 /var/www/your-app/*
+
+
+
+//load balancing 
+sudo nano /etc/nginx/sites-available/load-balancer.conf
+
+upstream backend {
+    server backend1.example.com;
+    server backend2.example.com;
+    server backend3.example.com;
+}
+
+server {
+    listen 80;
+    server_name your_domain_or_IP;
+
+    location / {
+        proxy_pass http://backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+sudo ln -s /etc/nginx/sites-available/load-balancer.conf /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
